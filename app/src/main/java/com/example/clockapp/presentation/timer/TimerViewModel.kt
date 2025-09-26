@@ -19,11 +19,11 @@ import org.threeten.bp.LocalDate
 import javax.inject.Inject
 
 data class ClockUiState(
-    val hour: String = "__",
-    val minute: String = "__",
-    val second: String = "__",
+    val hour: String = "00",
+    val minute: String = "00",
+    val second: String = "00",
     val amPm: String = "AM",
-    val is24hFormat: Boolean = true,   // ✅ Boolean instead of String
+    val is24hFormat: Boolean = true,
     val date: String = "",
     val region: String = "Loading..."
 )
@@ -36,12 +36,12 @@ class TimerViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(ClockUiState())
     val uiState: StateFlow<ClockUiState> = _uiState
 
-    /** ✅ Update region */
+    //  Update region
     fun updateRegion(newRegion: String) {
         _uiState.update { it.copy(region = newRegion) }
     }
 
-    /** ✅ Toggle format */
+    /**  Toggle format */
     fun toggleTimeFormat(is24h: Boolean) {
         _uiState.update { it.copy(is24hFormat = is24h) }
     }
@@ -76,7 +76,7 @@ class TimerViewModel @Inject constructor(
         }
     }
 
-    /** ✅ تحميل المنطقة تلقائي */
+    /**  تحميل المنطقة تلقائي */
     fun loadRegionAutomatically() {
         viewModelScope.launch {
             try {
@@ -89,7 +89,7 @@ class TimerViewModel @Inject constructor(
                 // 2- بعد كده المكان اللي عايزه يظهر في الفيديو
                 updateRegion("Egypt , Qalyubia ,Shubra Haris")
 
-                // 🎥 بعد ما تخلص تسجيل الفيديو..
+
                 // رجّع الكود القديم اللي بيجيب المكان الحقيقي من الـ repo
 
                 /*

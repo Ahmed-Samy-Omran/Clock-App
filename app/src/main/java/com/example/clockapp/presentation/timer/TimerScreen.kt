@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -29,10 +28,19 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import android.Manifest
 import androidx.compose.foundation.layout.height
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.res.painterResource
+import com.example.clockapp.R
+import com.example.clockapp.presentation.components.AnalogClock
 import com.example.clockapp.presentation.components.TimeFormatSegmentedControl
-import com.example.clockapp.ui.theme.ClockAppTheme
+
 
 @Composable
 fun TimerScreen(
@@ -40,10 +48,12 @@ fun TimerScreen(
     timerViewModel: TimerViewModel = hiltViewModel()
 ) {
     val uiState by timerViewModel.uiState.collectAsState()
+
+    var isAnalogClock by remember { mutableStateOf(true) }
+
     val context = LocalContext.current
 
-    //Prepares a launcher to request permission from the user.
-// inCase it granted it will load region automatically else it will show permission denied
+    // Permission launcher
     val locationPermission = Manifest.permission.ACCESS_FINE_LOCATION
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
@@ -55,9 +65,7 @@ fun TimerScreen(
         }
     }
 
-    //  if permission is already granted:
-    //If yes → loads region automatically.
-    //If not → requests permission from the use
+    // Request permission if not granted
     LaunchedEffect(Unit) {
         val hasPermission = ContextCompat.checkSelfPermission(
             context, locationPermission
@@ -78,10 +86,11 @@ fun TimerScreen(
         region = uiState.region,
         amPm = uiState.amPm,
         uiState = uiState,
-        onFormatChange = { is24h -> timerViewModel.toggleTimeFormat(is24h) }
+        onFormatChange = { is24h -> timerViewModel.toggleTimeFormat(is24h) },
+        isAnalogClock = isAnalogClock,
+        onClockTypeChange = { isAnalogClock = !isAnalogClock }
     )
 }
-
 
 @Composable
 fun TimerContent(
@@ -93,106 +102,103 @@ fun TimerContent(
     amPm: String,
     uiState: ClockUiState,
     onFormatChange: (Boolean) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isAnalogClock: Boolean,
+    onClockTypeChange: () -> Unit,
 ) {
     Column(
         modifier = modifier
             .fillMaxSize()
             .padding(top = 10.dp, start = 28.dp, end = 28.dp)
-
-
     ) {
-
         Row(
             modifier = Modifier
                 .fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
-                text = "Start",
-                color = Color.Black,
-                fontSize = 26.sp,
-            )
-
-            // responsible for changing the time format by SegmentedButton .
-            TimeFormatSegmentedControl(
-                onFormatChange = onFormatChange,
-                is24h = uiState.is24hFormat
-            )
-        }
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.Start,
-
-
-            ) {
-
-            ClockTicker(
-                value = hour,
-                fontSize = 110,
-                fontWeight = FontWeight.Bold,
-
+            IconButton(onClick = { onClockTypeChange() }) {
+                Icon(
+                    painter = if (isAnalogClock)
+                        painterResource(id = R.drawable.alarm_ic)
+                    else
+                        painterResource(id = R.drawable.num_clock_ic),
+                    contentDescription = "Switch clock type",
+                    tint = Color.Black,
+//                    modifier = Modifier.size(35.dp)
                 )
-
-
-            Spacer(modifier = Modifier.width(31.dp))
-
-
-            ClockTicker(
-                value = date, 30, modifier = Modifier
-                    .align(Alignment.CenterVertically),
-                fontWeight = FontWeight.Normal,
-                lineHeight = 40.sp
-            )
-        }
-
-
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 0.dp),
-            horizontalArrangement = Arrangement.Start
-        ) {
-
-
-            ClockTicker(
-                value = minute,
-                fontSize = 110,
-                fontWeight = FontWeight.Black,
-            )
-
-            Spacer(modifier = Modifier.width(31.dp))
-
-
-            ClockTicker(
-                value = seconds, 30, modifier = Modifier
-                    .align(Alignment.CenterVertically),
-                fontWeight = FontWeight.Normal
-            )
-
-            Spacer(modifier = Modifier.width(10.dp))
-
-            if(!uiState.is24hFormat){
-                ClockTicker(
-                    value = amPm, 30, modifier = Modifier
-                        .align(Alignment.CenterVertically),
-                    fontWeight = FontWeight.Normal
+            }
+            if (!isAnalogClock){
+                TimeFormatSegmentedControl(
+                    onFormatChange = onFormatChange,
+                    is24h = uiState.is24hFormat
                 )
             }
 
         }
 
+        if (isAnalogClock) {
+
+            AnalogClock(
+                hours = hour.toIntOrNull() ?: 0,
+                minutes = minute.toIntOrNull() ?: 0,
+                seconds = seconds.toIntOrNull() ?: 0
+            )
+        } else {
+            // Digital Clock UI
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Start,
+            ) {
+                ClockTicker(
+                    value = hour,
+                    fontSize = 110,
+                    fontWeight = FontWeight.Bold,
+                )
+                Spacer(modifier = Modifier.width(31.dp))
+                ClockTicker(
+                    value = date, 30, modifier = Modifier
+                        .align(Alignment.CenterVertically),
+                    fontWeight = FontWeight.Normal,
+                    lineHeight = 40.sp
+                )
+            }
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 0.dp),
+                horizontalArrangement = Arrangement.Start
+            ) {
+                ClockTicker(
+                    value = minute,
+                    fontSize = 110,
+                    fontWeight = FontWeight.Black,
+                )
+                Spacer(modifier = Modifier.width(31.dp))
+                ClockTicker(
+                    value = seconds, 30, modifier = Modifier
+                        .align(Alignment.CenterVertically),
+                    fontWeight = FontWeight.Normal
+                )
+                Spacer(modifier = Modifier.width(10.dp))
+
+                if (!uiState.is24hFormat) {
+                    ClockTicker(
+                        value = amPm, 30, modifier = Modifier
+                            .align(Alignment.CenterVertically),
+                        fontWeight = FontWeight.Normal
+                    )
+                }
+            }
+
+
+        }
         Spacer(modifier = Modifier.height(15.dp))
 
-        // it checks if the region contains loading or Getting return true else false
         val isLoadingRegion = region.contains("Loading") || region.contains("Getting")
 
         if (isLoadingRegion) {
-            // the case of loading region
             ClockTicker(
                 value = region,
                 fontSize = 24,
@@ -200,9 +206,7 @@ fun TimerContent(
                 color = Color.Gray
             )
         } else {
-            // the case of showing region
             val regionParts = region.split(",")
-
             Column(
                 modifier = Modifier
                     .align(Alignment.Start)
@@ -215,28 +219,9 @@ fun TimerContent(
                         fontSize = 40,
                         fontWeight = FontWeight.Normal,
                         lineHeight = 52.sp
-
                     )
                 }
             }
         }
     }
 }
-
-//@Preview(showSystemUi = true, showBackground = true)
-//@Composable
-//
-//fun TimerScreenPreview() {
-//    ClockAppTheme {
-//        TimerContent(
-//            hour = "08",
-//            date = "Thu, 20 Mar",
-//            minute = "40",
-//            seconds = "15",
-//            region = "Egypt , Qalyubia ,Shubra Haris",
-//            amPm = "AM",
-//            uiState = ClockUiState(),
-//            onFormatChange = {}
-//        )
-//    }
-//}
