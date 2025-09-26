@@ -1,6 +1,12 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+
+    id("kotlin-kapt")  // for data binding
+    id("kotlin-parcelize")
+    id("com.google.dagger.hilt.android")
+    id ("kotlin-android")
+
 }
 
 android {
@@ -59,6 +65,7 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.play.services.location)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -69,4 +76,31 @@ dependencies {
 
     // navigation
     implementation("androidx.navigation:navigation-compose:2.7.7")
+
+    // for use localtime in lower api levels
+//    implementation ("com.jakewharton.threetenabp:threetenabp:1.4.9")
+//    implementation ("org.threeten:threetenbp:1.6.8")
+
+    implementation ("com.jakewharton.threetenabp:threetenabp:1.4.6")
+
+
+    // hilt
+    implementation("androidx.hilt:hilt-navigation-compose:1.1.0")
+    implementation("com.google.dagger:hilt-android:2.48")
+    kapt("com.google.dagger:hilt-compiler:2.48")
+
+
+    // google play srvice
+    implementation ("com.google.android.gms:play-services-location:21.0.1")
+
+    // Also check if you need the base play services
+    implementation ("com.google.android.gms:play-services-base:18.2.0")
+
+
+    //material 3 compose
+    implementation("androidx.compose.material3:material3:1.3.2")
+    implementation("androidx.compose.material3:material3-window-size-class:1.3.2")
+
+
+
 }
