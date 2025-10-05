@@ -38,9 +38,9 @@ fun CustomBottomNav(navController: NavController) {
 
     // list of items in navigation
     val items = listOf(
-        BottomNavItem(Screen.TimerScreen, R.drawable.alarm_ic, "Timer"),
+        BottomNavItem(Screen.ClockScreen, R.drawable.alarm_ic, "Clock"),
         BottomNavItem(Screen.WorldClockScreen, R.drawable.world_ic, "World Clock"),
-        BottomNavItem(Screen.StopWatchScreen, R.drawable.stopwatch_ic, "Stop Watch"),
+        BottomNavItem(Screen.TimerScreen, R.drawable.stopwatch_ic, "Timer"),
         BottomNavItem(Screen.LocationAlarmScreen, R.drawable.location_ic, "Location Alarm"),
     )
 

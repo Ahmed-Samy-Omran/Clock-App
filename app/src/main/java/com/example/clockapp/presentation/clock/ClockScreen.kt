@@ -1,4 +1,4 @@
-package com.example.clockapp.presentation.timer
+package com.example.clockapp.presentation.clock
 
 import ClockTicker
 import android.content.pm.PackageManager
@@ -28,11 +28,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import android.Manifest
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -43,9 +40,9 @@ import com.example.clockapp.presentation.components.TimeFormatSegmentedControl
 
 
 @Composable
-fun TimerScreen(
+fun ClockScreen(
     navHostController: NavHostController,
-    timerViewModel: TimerViewModel = hiltViewModel()
+    timerViewModel: ClockViewModel = hiltViewModel()
 ) {
     val uiState by timerViewModel.uiState.collectAsState()
 
@@ -78,7 +75,7 @@ fun TimerScreen(
         }
     }
 
-    TimerContent(
+    ClockContent(
         hour = uiState.hour,
         date = uiState.date,
         minute = uiState.minute,
@@ -93,7 +90,7 @@ fun TimerScreen(
 }
 
 @Composable
-fun TimerContent(
+fun ClockContent(
     hour: String,
     date: String,
     minute: String,
@@ -117,17 +114,17 @@ fun TimerContent(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            IconButton(onClick = { onClockTypeChange() }) {
-                Icon(
-                    painter = if (isAnalogClock)
-                        painterResource(id = R.drawable.alarm_ic)
-                    else
-                        painterResource(id = R.drawable.num_clock_ic),
-                    contentDescription = "Switch clock type",
-                    tint = Color.Black,
-//                    modifier = Modifier.size(35.dp)
-                )
-            }
+                IconButton(onClick = { onClockTypeChange() }) {
+                    Icon(
+                        painter = if (isAnalogClock)
+                            painterResource(id = R.drawable.alarm_ic)
+                        else
+                            painterResource(id = R.drawable.num_clock_ic),
+                        contentDescription = "Switch clock type",
+                        tint = Color.Black,
+    //                    modifier = Modifier.size(35.dp)
+                    )
+                }
             if (!isAnalogClock){
                 TimeFormatSegmentedControl(
                     onFormatChange = onFormatChange,

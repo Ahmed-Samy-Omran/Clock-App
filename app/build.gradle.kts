@@ -101,6 +101,13 @@ dependencies {
     implementation("androidx.compose.material3:material3:1.3.2")
     implementation("androidx.compose.material3:material3-window-size-class:1.3.2")
 
+    // DataStore (Preferences)
+    implementation ("androidx.datastore:datastore-preferences:1.1.0")
+
+    // time picker
+    implementation ("com.chargemap.compose:numberpicker:1.0.3")
+
+
 
 
 }

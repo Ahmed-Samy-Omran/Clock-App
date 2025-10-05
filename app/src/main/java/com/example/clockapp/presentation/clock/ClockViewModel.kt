@@ -1,10 +1,8 @@
-package com.example.clockapp.presentation.timer
+package com.example.clockapp.presentation.clock
 
-import androidx.compose.runtime.MutableState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.clockapp.domain.clock.ClockRepo
-import com.example.clockapp.utils.formatDate
 import com.example.clockapp.utils.formatFullDate
 import com.example.clockapp.utils.formatHour
 import com.example.clockapp.utils.formatMinute
@@ -29,7 +27,7 @@ data class ClockUiState(
 )
 
 @HiltViewModel
-class TimerViewModel @Inject constructor(
+class ClockViewModel @Inject constructor(
     private val repo: ClockRepo
 ) : ViewModel() {
 
